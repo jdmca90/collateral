@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Reportable — demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html,body{margin:0;padding:0}
+  #root{min-height:100vh}
+  .app[data-theme="light"]{
+    --brand:#540863; --surface:#FAF6F8; --card:#FFFFFF; --line:#EADFE6; --line-2:#D9C7D4;
+    --text:#2A1826; --muted:#6E5C68; --btn-bg:#540863; --btn-bg-h:#6A1F7C; --btn-fg:#FFFFFF;
+    --mand-bg:#540863; --mand-fg:#FFFFFF; --lim-bg:#92487A; --lim-fg:#FFFFFF; --adv-bg:#E49BA6; --adv-fg:#540863;
+    --tint-mand:#F0E2EE; --tint-lim:#F3E6EE; --tint-adv:#FFD3D5; --tint-adv-line:#E49BA6; --tint-adv-fg:#540863;
+    --banner-bg:#FFD3D5; --banner-fg:#540863; --ghost-line:#C9A9C2; --hover:#F4ECF1; --field-sh:#E4C9DC;
+  }
+  .app[data-theme="dark"]{
+    --brand:#CB92D8; --surface:#1B0F1C; --card:#2A1A2C; --line:#3C2B3E; --line-2:#4A3A4C;
+    --text:#F2E8EF; --muted:#B3A0B0; --btn-bg:#8E3AA2; --btn-bg-h:#A04AB5; --btn-fg:#FFFFFF;
+    --mand-bg:#B24AC2; --mand-fg:#FFFFFF; --lim-bg:#A85C97; --lim-fg:#FFFFFF; --adv-bg:#C98890; --adv-fg:#2A1530;
+    --tint-mand:#33203A; --tint-lim:#36213A; --tint-adv:#3A2228; --tint-adv-line:#5A3A40; --tint-adv-fg:#E7B9C0;
+    --banner-bg:#3A2228; --banner-fg:#E7B9C0; --ghost-line:#6E4A72; --hover:#33213A; --field-sh:#3C2B3E;
+  }
+  *{box-sizing:border-box}
+  .app{font-family:'IBM Plex Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh;line-height:1.5}
+  .app button{font-family:inherit;cursor:pointer}
+  .app a{color:inherit;text-decoration:none}
+  .app input{font-family:inherit}
+  .app :focus-visible{outline:2.5px solid var(--brand);outline-offset:2px;border-radius:3px}
+
+  .banner{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--banner-bg);color:var(--banner-fg);font-size:12.5px;font-weight:500;padding:7px 14px}
+  .banner-dot{width:7px;height:7px;border-radius:50%;background:var(--banner-fg)}
+
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 24px;border-bottom:1px solid var(--line);background:var(--card)}
+  .brand{display:flex;align-items:center;gap:9px;background:none;border:none;padding:0}
+  .brand-mark{width:29px;height:29px;border-radius:8px;background:var(--btn-bg);color:var(--btn-fg);display:grid;place-items:center}
+  .brand-word{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.01em;color:var(--brand)}
+  .top-right{display:flex;align-items:center;gap:14px}
+  .monitor{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-family:'IBM Plex Mono',monospace;background:var(--hover);padding:5px 10px;border-radius:20px}
+  .theme-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--text);display:grid;place-items:center}
+  .theme-btn:hover{background:var(--hover)}
+
+  .hero{padding:74px 24px 90px;display:flex;justify-content:center}
+  .hero-inner{max-width:660px;width:100%;text-align:center}
+  .hero h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(32px,5vw,52px);letter-spacing:-.025em;margin:0 0 16px;color:var(--text)}
+  .lede{font-size:17px;color:var(--muted);margin:0 auto 32px;max-width:520px}
+  .zip-field{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--brand);border-radius:16px;padding:8px 8px 8px 18px;max-width:520px;margin:0 auto;box-shadow:5px 5px 0 var(--field-sh)}
+  .zip-field svg{color:var(--muted);flex:none}
+  .zip-field input{border:none;outline:none;background:none;font-size:17px;flex:1;padding:10px 0;color:var(--text)}
+  .zip-go{display:flex;align-items:center;gap:7px;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:10px;padding:12px 18px;font-weight:600;font-size:15px;white-space:nowrap}
+  .zip-go:hover{background:var(--btn-bg-h)}
+  .zip-err{color:#b3445a;font-size:13.5px;margin:10px auto 0;max-width:520px}
+  .app[data-theme="dark"] .zip-err{color:#E79AA6}
+
+  .state-chips{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:30px 0 26px}
+  .chips-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-family:'IBM Plex Mono',monospace}
+  .state-chip{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:8px 14px;font-size:14px;font-weight:500;color:var(--text);transition:.12s}
+  .state-chip .zipmono{font-size:11.5px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+  .state-chip:hover{border-color:var(--brand);background:var(--hover);transform:translateY(-1px)}
+
+  .mini-legend{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+  .mini-tier{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px}
+
+  .tier-mand{background:var(--mand-bg);color:var(--mand-fg)}
+  .tier-lim{background:var(--lim-bg);color:var(--lim-fg)}
+  .tier-adv{background:var(--adv-bg);color:var(--adv-fg)}
+
+  .results{display:grid;grid-template-columns:262px 1fr;align-items:start;max-width:1320px;margin:0 auto}
+  .rail{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:24px 20px;border-right:1px solid var(--line)}
+  .rail-state{padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .rail-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+  .rail-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;line-height:1.1;margin:3px 0 2px;color:var(--text)}
+  .rail-zip{font-size:12px;color:var(--muted);margin-bottom:12px;font-family:'IBM Plex Mono',monospace}
+  .switch{background:var(--hover);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:500;color:var(--text)}
+  .switch:hover{border-color:var(--brand)}
+
+  .search{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:18px}
+  .search svg{color:var(--muted);flex:none}
+  .search input{border:none;outline:none;background:none;font-size:13.5px;width:100%;color:var(--text)}
+  .filter-group{margin-bottom:18px}
+  .filter-sub{display:flex;align-items:center;gap:6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:9px;font-family:'IBM Plex Mono',monospace}
+  .check{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:4px 0;cursor:pointer;color:var(--text)}
+  .check input{accent-color:var(--brand);width:15px;height:15px;flex:none}
+  .check-sw{width:13px;height:13px;border-radius:4px;flex:none}
+
+  .toc{margin-top:4px}
+  .toc-domain{margin-bottom:13px}
+  .toc-domain-name{font-size:12.5px;font-weight:600;margin-bottom:5px;color:var(--text)}
+  .toc-link{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);padding:4px 0 4px 2px}
+  .toc-link svg{flex:none;opacity:.5}
+  .toc-link:hover{color:var(--brand)}
+
+  .feed{padding:28px 30px 60px;min-width:0}
+  .feed-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+  .feed-head h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;margin:0;letter-spacing:-.01em;color:var(--text)}
+  .feed-count{font-size:13px;color:var(--muted);margin:3px 0 0}
+
+  .tip-wrap{position:relative;display:inline-flex}
+  .ask-open{display:flex;align-items:center;gap:7px;border-radius:10px;padding:10px 15px;font-weight:600;font-size:14px}
+  .ask-open.stub{background:var(--hover);color:var(--text);border:1px dashed var(--line-2)}
+  .tip-text{position:absolute;top:calc(100% + 8px);right:0;width:264px;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.45;box-shadow:0 8px 26px rgba(0,0,0,.18);opacity:0;visibility:hidden;transform:translateY(-4px);transition:.14s;z-index:30;text-align:left;font-weight:400}
+  .tip-wrap:hover .tip-text,.tip-wrap:focus-within .tip-text{opacity:1;visibility:visible;transform:none}
+
+  .domain-section{margin-bottom:32px}
+  .domain-banner{margin-bottom:13px}
+  .domain-banner h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;margin:0 0 2px;text-transform:uppercase;letter-spacing:.05em;color:var(--brand)}
+  .domain-banner p{font-size:13px;color:var(--muted);margin:0}
+
+  .card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:13px;padding:17px 19px;margin-bottom:13px}
+  .spine-mand{border-left-color:var(--mand-bg)} .spine-lim{border-left-color:var(--lim-bg)} .spine-adv{border-left-color:var(--adv-bg)}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .card-head h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;margin:0;letter-spacing:-.01em;color:var(--text)}
+  .card-head-right{display:flex;align-items:center;gap:9px}
+  .roadmap{font-size:11px;color:var(--muted);border:1px dashed var(--line-2);border-radius:20px;padding:3px 9px}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-weight:600;padding:5px 11px;border-radius:20px;white-space:nowrap}
+
+  .layer-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
+  .layer-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;border:1px solid var(--ghost-line);color:var(--brand)}
+  .layer-pill.off{opacity:.45;border-style:dashed;text-decoration:line-through;color:var(--muted)}
+
+  .note{font-size:13px;line-height:1.5;border-radius:9px;padding:11px 13px;margin-bottom:13px}
+  .tint-mand{background:var(--tint-mand);color:var(--text)} .tint-lim{background:var(--tint-lim);color:var(--text)}
+  .tint-adv{background:var(--tint-adv);color:var(--tint-adv-fg);border:1px solid var(--tint-adv-line)}
+
+  .how{border-top:1px solid var(--line);padding-top:13px}
+  .how-label{display:flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;font-family:'IBM Plex Mono',monospace}
+  .step{display:flex;gap:10px;margin-bottom:9px;font-size:13.5px;line-height:1.5}
+  .step-ic{flex:none;width:24px;height:24px;border-radius:7px;background:var(--hover);color:var(--brand);display:grid;place-items:center;margin-top:1px}
+  .step-layer{display:inline-block;font-weight:600;color:var(--brand);margin-right:7px;font-size:12.5px}
+
+  .card-foot{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-top:12px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace}
+  .card-foot svg{opacity:.6}.card-foot .dot{opacity:.5}
+
+  .empty{padding:38px;text-align:center;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:13px}
+  .feed-foot{font-size:12px;color:var(--muted);line-height:1.55;background:var(--hover);border-radius:11px;padding:14px 16px;margin-top:6px}
+
+  @media (max-width:880px){
+    .results{grid-template-columns:1fr}
+    .rail{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line)}
+    .feed{padding:22px 18px 50px}
+    .tip-text{right:auto;left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useMemo, useRef, useEffect } = React;
+
+/* ---- inline icons --------------------------------------------------------- */
+const SHIELD = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>';
+const ICONS = {
+  "shield-check": SHIELD + '<path d="M9 12l2 2 4-4"/>',
+  "shield-alert": SHIELD + '<path d="M12 8v4"/><path d="M12 16h.01"/>',
+  "shield-question": SHIELD + '<path d="M9.6 9.5a2.4 2.4 0 1 1 3.2 2.3c-.7.3-1.3.9-1.3 1.7"/><path d="M12 16h.01"/>',
+  "map-pin": '<path d="M12 21s-6-5.6-6-10a6 6 0 1 1 12 0c0 4.4-6 10-6 10z"/><circle cx="12" cy="10.5" r="2.4"/>',
+  "chevron-right": '<path d="M9 6l6 6-6 6"/>',
+  "x": '<path d="M6 6l12 12"/><path d="M18 6L6 18"/>',
+  "send": '<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',
+  "refresh-cw": '<path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/>',
+  "file-text": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h5"/>',
+  "filter": '<path d="M3 5h18l-7 8.5V20l-4 1.5v-8z"/>',
+  "arrow-right": '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+  "sun": '<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>',
+  "moon": '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>',
+  "landmark": '<path d="M3 21h18"/><path d="M4 21V10M9 21V10M15 21V10M20 21V10"/><path d="M12 3l9 5H3z"/>',
+  "building-2": '<path d="M4 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16"/><path d="M12 9h7a1 1 0 0 1 1 1v11"/><path d="M7 8h.01M7 12h.01M16 13h.01M16 17h.01"/>',
+  "clipboard-list": '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M9 12h6M9 16h6"/>',
+  "search": '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+};
+function Icon({ name, size = 16, strokeWidth = 2, style }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" style={style}
+    dangerouslySetInnerHTML={{ __html: ICONS[name] || "" }} />;
+}
+const mk = (n) => (p) => <Icon name={n} {...p} />;
+const ShieldCheck = mk("shield-check"), ShieldAlert = mk("shield-alert"), ShieldQuestion = mk("shield-question");
+const MapPin = mk("map-pin"), ChevronRight = mk("chevron-right"), Send = mk("send"), RefreshCw = mk("refresh-cw");
+const FileText = mk("file-text"), Filter = mk("filter"), ArrowRight = mk("arrow-right"), Sun = mk("sun"), Moon = mk("moon");
+const Landmark = mk("landmark"), Building2 = mk("building-2"), ClipboardList = mk("clipboard-list"), Search = mk("search");
+
+/* ---- taxonomy ------------------------------------------------------------- */
+const TIERS = {
+  mandatory: { short: "Mandated", label: "Mandated · enforceable", Icon: ShieldCheck, key: "mand" },
+  limited:   { short: "Limited",  label: "Limited · weak enforcement", Icon: ShieldAlert, key: "lim" },
+  advisory:  { short: "Advisory", label: "Advisory · no statute", Icon: ShieldQuestion, key: "adv" },
+};
+const LAYERS = { Federal: { Icon: Landmark }, State: { Icon: Building2 }, Local: { Icon: MapPin } };
+const DOMAINS = [
+  { id: "infectious", name: "Infectious disease", blurb: "Communicable-disease surveillance reporting to public-health authorities." },
+  { id: "vulnerable", name: "Vulnerable populations", blurb: "Mandated-reporter duties for suspected abuse, neglect, or exploitation." },
+  { id: "driving", name: "Driving", blurb: "Driver-safety duties after an impairing cardiac or neurologic event." },
+];
+const CATEGORIES = [
+  { id: "hiv", name: "HIV / AIDS", domain: "infectious" },
+  { id: "covid", name: "COVID-19", domain: "infectious" },
+  { id: "syphilis", name: "Syphilis", domain: "infectious" },
+  { id: "gonorrhea", name: "Gonorrhea", domain: "infectious" },
+  { id: "child", name: "Child abuse & neglect", domain: "vulnerable" },
+  { id: "elder", name: "Elder / vulnerable-adult abuse", domain: "vulnerable" },
+  { id: "syncope", name: "Syncope & driving", domain: "driving" },
+  { id: "icd", name: "ICD discharge & driving", domain: "driving" },
+];
+const STATES = [
+  { id: "VA", name: "Virginia", zip: "22042", zips: ["220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246"] },
+  { id: "MD", name: "Maryland", zip: "21201", zips: ["206","207","208","209","210","211","212","214","215","216","217","218","219"] },
+  { id: "GA", name: "Georgia", zip: "30303", zips: ["300","301","302","303","304","305","306","307","308","309","310","311","312","313","314","315","316","317","318","319","398","399"] },
+  { id: "AZ", name: "Arizona", zip: "85004", zips: ["850","851","852","853","855","856","857","859","860","863","864","865"] },
+  { id: "OH", name: "Ohio", zip: "43215", zips: ["430","431","432","433","434","435","436","437","438","439","440","441","442","443","444","445","446","447","448","449","450","451","452","453","454","455","456","457","458"] },
+  { id: "CT", name: "Connecticut", zip: "06103", zips: ["060","061","062","063","064","065","066","067","068","069"] },
+];
+
+/* ---- synthesized content (illustrative; not verified) --------------------- */
+const FED = {
+  hiv: "Nationally notifiable to the CDC (NNDSS) through state surveillance; HIPAA permits public-health reporting without patient authorization.",
+  covid: "Nationally notifiable to the CDC (NNDSS); federal laboratory-reporting requirements also apply.",
+  syphilis: "Nationally notifiable to the CDC (NNDSS) through state surveillance.",
+  gonorrhea: "Nationally notifiable to the CDC (NNDSS) through state surveillance.",
+  child: "CAPTA sets federal minimum standards and funding; the mandatory-reporting duty itself is defined by state law.",
+  elder: "The Elder Justice Act frames federal policy; covered long-term-care facilities must report suspected crimes under 42 U.S.C. § 1397j-1.",
+  syncope: "FMCSA medical-certification standards govern commercial (CDL) drivers; there is no federal duty for non-commercial drivers.",
+  icd: "FMCSA standards disqualify most ICD recipients from commercial (CDL) driving; there is no federal duty for non-commercial drivers.",
+};
+const STATE_INF = {
+  VA: { agency: "Virginia Dept. of Health (VDH)", cite: "12VAC5-90-90", method: "VEDSS electronic entry or confidential morbidity report" },
+  MD: { agency: "Maryland Dept. of Health", cite: "COMAR 10.06.01.04", method: "NEDSS electronic case report" },
+  GA: { agency: "Georgia Dept. of Public Health", cite: "Ga. Comp. R. & Regs. 511-2-1-.03", method: "SendSS electronic report" },
+  AZ: { agency: "Arizona Dept. of Health Services", cite: "A.A.C. R9-6-202", method: "MEDSIS electronic report" },
+  OH: { agency: "Ohio Dept. of Health", cite: "O.A.C. 3701-3-02", method: "ODRS electronic report" },
+  CT: { agency: "Connecticut Dept. of Public Health", cite: "R.C.S.A. 19a-2-13", method: "confidential electronic case report" },
+};
+const TIME = {
+  hiv:       { VA: "3 business days", MD: "48 hours", GA: "7 days", AZ: "1 working day", OH: "7 days", CT: "48 hours" },
+  covid:     { VA: "24 hours", MD: "24 hours", GA: "24 hours", AZ: "1 working day", OH: "24 hours", CT: "12 hours" },
+  syphilis:  { VA: "3 business days", MD: "1 working day", GA: "7 days", AZ: "1 working day", OH: "1 working day", CT: "48 hours" },
+  gonorrhea: { VA: "7 days", MD: "1 working day", GA: "7 days", AZ: "1 working day", OH: "3 days", CT: "48 hours" },
+};
+const CITE = {
+  child: { VA: "Va. Code § 63.2-1509", MD: "Md. Fam. Law § 5-704", GA: "O.C.G.A. § 19-7-5", AZ: "A.R.S. § 13-3620", OH: "Ohio Rev. Code § 2151.421", CT: "Conn. Gen. Stat. § 17a-101" },
+  elder: { VA: "Va. Code § 63.2-1606", MD: "Md. Fam. Law § 14-302", GA: "O.C.G.A. § 30-5-4", AZ: "A.R.S. § 46-454", OH: "Ohio Rev. Code § 5101.63", CT: "Conn. Gen. Stat. § 17b-451" },
+};
+const CHILD_TIME = { VA: "immediately; written within 72 hours", MD: "promptly; written within 48 hours", GA: "24 hours", AZ: "immediately", OH: "immediately", CT: "immediately; written within 48 hours" };
+const ELDER_TIME = { VA: "24 hours", MD: "promptly", GA: "24 hours", AZ: "immediately", OH: "immediately", CT: "as soon as practicable; written within 5 days" };
+const CHILD_HOTLINE = { VA: "1-800-552-7096", MD: "1-800-332-6347", GA: "1-855-422-4453", AZ: "1-888-767-2445", OH: "1-855-642-4453", CT: "1-800-842-2288" };
+const APS_HOTLINE   = { VA: "1-888-832-3858", MD: "1-800-917-7383", GA: "1-866-552-4464", AZ: "1-877-767-2385", OH: "1-855-644-6277", CT: "1-888-385-4225" };
+const LOCAL = {
+  VA: { county: "Fairfax County", health: "Fairfax Health District", healthPhone: "(703) 555-0142", path: "VEDSS, or mailed CMR to the Joseph Willard Health Center", dss: "Fairfax County Dept. of Family Services", dssPhone: "(703) 555-0188", apsPhone: "(703) 555-0173" },
+  MD: { county: "Baltimore City", health: "Baltimore City Health Dept.", healthPhone: "(410) 555-0119", path: "the MD NEDSS portal", dss: "Baltimore City Dept. of Social Services", dssPhone: "(410) 555-0143", apsPhone: "(410) 555-0166" },
+  GA: { county: "Fulton County", health: "Fulton County Board of Health", healthPhone: "(404) 555-0127", path: "SendSS", dss: "Fulton County DFCS", dssPhone: "(404) 555-0151", apsPhone: "(404) 555-0162" },
+  AZ: { county: "Maricopa County", health: "Maricopa County Dept. of Public Health", healthPhone: "(602) 555-0134", path: "MEDSIS", dss: "Maricopa County DCS office", dssPhone: "(602) 555-0177", apsPhone: "(602) 555-0190" },
+  OH: { county: "Franklin County", health: "Columbus Public Health", healthPhone: "(614) 555-0112", path: "the ODRS portal", dss: "Franklin County Children Services", dssPhone: "(614) 555-0149", apsPhone: "(614) 555-0158" },
+  CT: { county: "Hartford", health: "Hartford Health Dept.", healthPhone: "(860) 555-0125", path: "the CT electronic case-report system", dss: "Hartford DCF area office", dssPhone: "(860) 555-0139", apsPhone: "(860) 555-0184" },
+};
+const DRIVING = {
+  syncope: {
+    tier: { VA: "advisory", MD: "limited", GA: "advisory", AZ: "limited", OH: "advisory", CT: "advisory" },
+    state: {
+      VA: "VA DMV Medical Review Services accepts voluntary reports; no mandatory duty. No reporting statute.",
+      MD: "MD MVA Medical Advisory Board — physician reporting permitted with statutory immunity. Md. Transp. § 16-118.",
+      GA: "GA DDS accepts voluntary reports; no mandatory duty. No reporting statute.",
+      AZ: "AZ MVD Medical Review — physician may report. A.R.S. § 28-3005.",
+      OH: "OH BMV accepts voluntary reports; no mandatory duty. No reporting statute.",
+      CT: "CT DMV Medical Review accepts voluntary reports; no mandatory duty. No reporting statute.",
+    },
+    note: "No mandatory physician-reporting statute. Driving cessation follows consensus guidance (≈1 week for reflex syncope; longer if unexplained or recurrent) — effectively assumed liability rather than a reportable event.",
+  },
+  icd: {
+    tier: { VA: "advisory", MD: "advisory", GA: "advisory", AZ: "advisory", OH: "advisory", CT: "advisory" },
+    state: {
+      VA: "Patient self-reports to VA DMV; no physician duty. No reporting statute.",
+      MD: "Patient self-reports to MD MVA; no physician duty. No reporting statute.",
+      GA: "Patient self-reports to GA DDS; no physician duty. No reporting statute.",
+      AZ: "Patient self-reports to AZ MVD; no physician duty. No reporting statute.",
+      OH: "Patient self-reports to OH BMV; no physician duty. No reporting statute.",
+      CT: "Patient self-reports to CT DMV; no physician duty. No reporting statute.",
+    },
+    note: "No state imposes physician reporting for ICD recipients. Restriction intervals are HRS/AHA consensus (≈1 week after primary-prevention implant; longer after an appropriate shock). Compliance rests on counseling and patient self-report — the clearest 'no-teeth' example.",
+  },
+};
+const NOTE_INF = "Reportable communicable condition. The provider's duty is independent of laboratory reporting.";
+const NOTE_CHILD = "Failure to report suspected child abuse is a criminal offense and a licensure matter in every listed state.";
+const NOTE_ELDER = "Covers abuse, neglect, self-neglect, and financial exploitation identified during the clinical encounter.";
+
+function step(layer, text) { return { layer, text }; }
+function buildEntry(cat, s) {
+  const L = LOCAL[s.id];
+  const checkedDay = 13 + ((cat.id.charCodeAt(0) + s.id.charCodeAt(0)) % 8);
+  const base = { checked: `2026-06-${checkedDay}` };
+  if (cat.domain === "infectious") {
+    const t = TIME[cat.id][s.id]; const st = STATE_INF[s.id];
+    return { ...base, tier: "mandatory", layers: { Federal: true, State: true, Local: true }, cite: st.cite, note: NOTE_INF, src: `${st.agency} reportable-disease list`,
+      steps: [ step("Federal", FED[cat.id]), step("State", `Report to ${st.agency} within ${t} — ${st.method}. ${st.cite}.`), step("Local", `Routed to ${L.health} for ${L.county}. Submit via ${L.path}; epidemiology line ${L.healthPhone}.`) ] };
+  }
+  if (cat.id === "child") {
+    return { ...base, tier: "mandatory", layers: { Federal: true, State: true, Local: true }, cite: CITE.child[s.id], note: NOTE_CHILD, src: `${s.name} mandated-reporter statute`,
+      steps: [ step("Federal", FED.child), step("State", `Mandated reporter — report ${CHILD_TIME[s.id]}. ${CITE.child[s.id]}.`), step("Local", `${L.dss} CPS, or the statewide hotline ${CHILD_HOTLINE[s.id]} (24/7). Local intake ${L.dssPhone}.`) ] };
+  }
+  if (cat.id === "elder") {
+    const tier = s.id === "CT" ? "limited" : "mandatory";
+    return { ...base, tier, layers: { Federal: true, State: true, Local: true }, cite: CITE.elder[s.id], note: NOTE_ELDER, src: `${s.name} adult-protective-services statute`,
+      steps: [ step("Federal", FED.elder), step("State", `Report to Adult Protective Services ${ELDER_TIME[s.id]}. ${CITE.elder[s.id]}.`), step("Local", `${s.name} APS, statewide ${APS_HOTLINE[s.id]}; local office ${L.apsPhone}.`) ] };
+  }
+  const d = DRIVING[cat.id];
+  return { ...base, tier: d.tier[s.id], layers: { Federal: true, State: true, Local: false },
+    cite: cat.id === "icd" ? "No reporting statute · HRS/AHA guidance" : (d.tier[s.id] === "limited" ? "Permissive reporting statute" : "No reporting statute"),
+    note: d.note, src: `${s.name} driver-medical-review policy`,
+    steps: [ step("Federal", FED[cat.id]), step("State", `${d.state[s.id]} Counsel the patient on the restriction interval and document the advice.`) ] };
+}
+const DATA = {};
+STATES.forEach((s) => { DATA[s.id] = {}; CATEGORIES.forEach((c) => { DATA[s.id][c.id] = buildEntry(c, s); }); });
+function zipToState(zip) { const p = (zip || "").trim().slice(0, 3); return STATES.find((s) => s.zips.includes(p)) || null; }
+
+/* ---- pieces --------------------------------------------------------------- */
+function TierChip({ tier, small }) {
+  const t = TIERS[tier]; const I = t.Icon;
+  return <span className={`chip tier-${t.key}`} style={{ fontSize: small ? 11 : 12 }}><I size={small ? 12 : 13} strokeWidth={2.4} />{small ? t.short : t.label}</span>;
+}
+function LayerPill({ name, active }) {
+  const I = LAYERS[name].Icon;
+  return <span className={`layer-pill ${active ? "on" : "off"}`}><I size={12} strokeWidth={2.2} /> {name}</span>;
+}
+function Step({ layer, text }) {
+  const I = LAYERS[layer].Icon;
+  return <div className="step"><span className="step-ic"><I size={14} strokeWidth={2.2} /></span><div><span className="step-layer">{layer}</span>{text}</div></div>;
+}
+function RequirementCard({ cat, entry }) {
+  const t = TIERS[entry.tier];
+  return (
+    <article id={`cat-${cat.id}`} className={`card spine-${t.key}`}>
+      <header className="card-head">
+        <h3>{cat.name}</h3>
+        <div className="card-head-right">
+          {entry.tier === "mandatory" && <span className="roadmap" title="Planned feature">Prefilled form · planned</span>}
+          <TierChip tier={entry.tier} />
+        </div>
+      </header>
+      <div className="layer-row">{["Federal", "State", "Local"].map((n) => <LayerPill key={n} name={n} active={entry.layers[n]} />)}</div>
+      <div className={`note tint-${t.key}`}>{entry.note}</div>
+      <div className="how">
+        <div className="how-label"><ClipboardList size={13} /> How to report</div>
+        {entry.steps.map((s, i) => <Step key={i} {...s} />)}
+      </div>
+      <footer className="card-foot"><RefreshCw size={11} /><span>{entry.src}</span><span className="dot">·</span><span>last checked {entry.checked}</span></footer>
+    </article>
+  );
+}
+
+function initialTheme() {
+  try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
+  catch (e) { return "light"; }
+}
+
+function App() {
+  const [theme, setTheme] = useState(initialTheme);
+  const [view, setView] = useState("home");
+  const [state, setState] = useState(null);
+  const [zip, setZip] = useState("");
+  const [zipErr, setZipErr] = useState("");
+  const [query, setQuery] = useState("");
+  const [tiers, setTiers] = useState(new Set(["mandatory", "limited", "advisory"]));
+  const [domains, setDomains] = useState(new Set(DOMAINS.map((d) => d.id)));
+
+  function go(s) { setState(s); setView("results"); setZipErr(""); }
+  function submitZip() {
+    const s = zipToState(zip);
+    if (!s) { setZipErr("No sample data for that ZIP. This demo covers VA, MD, GA, AZ, OH, and CT — pick one below."); return; }
+    go(s);
+  }
+  function toggle(set, setter, key) { const n = new Set(set); n.has(key) ? n.delete(key) : n.add(key); setter(n); }
+
+  const visible = useMemo(() => {
+    if (!state) return [];
+    const q = query.trim().toLowerCase();
+    return DOMAINS.filter((d) => domains.has(d.id)).map((d) => ({
+      domain: d,
+      cats: CATEGORIES.filter((c) => c.domain === d.id)
+        .filter((c) => tiers.has(DATA[state.id][c.id].tier))
+        .filter((c) => !q || c.name.toLowerCase().includes(q) || DATA[state.id][c.id].steps.some((s) => s.text.toLowerCase().includes(q)) || DATA[state.id][c.id].note.toLowerCase().includes(q)),
+    })).filter((g) => g.cats.length > 0);
+  }, [state, query, tiers, domains]);
+
+  const total = state ? CATEGORIES.length : 0;
+  const shown = visible.reduce((n, g) => n + g.cats.length, 0);
+
+  const ThemeBtn = (
+    <button className="theme-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle light or dark mode">
+      {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+    </button>
+  );
+
+  return (
+    <div className="app" data-theme={theme}>
+      <div className="banner"><span className="banner-dot" />Illustrative sample data — not verified, not for clinical or legal use</div>
+
+      <header className="top">
+        <button className="brand" onClick={() => setView("home")}>
+          <span className="brand-mark"><ShieldCheck size={17} strokeWidth={2.6} /></span>
+          <span className="brand-word">Reportable</span>
+        </button>
+        <div className="top-right">
+          <span className="monitor"><RefreshCw size={12} /> sources monitored daily · synced 06/21</span>
+          {ThemeBtn}
+        </div>
+      </header>
+
+      {view === "home" ? (
+        <main className="hero">
+          <div className="hero-inner">
+            <h1>Do I need to report this?</h1>
+            <p className="lede">Let's check what federal, state, and local regulations require. Which ZIP code does this concern?</p>
+            <div className="zip-field">
+              <MapPin size={19} />
+              <input value={zip} onChange={(e) => { setZip(e.target.value); setZipErr(""); }} onKeyDown={(e) => { if (e.key === "Enter") submitZip(); }} placeholder="Practice ZIP code" inputMode="numeric" aria-label="Practice ZIP code" />
+              <button className="zip-go" onClick={submitZip}>Look up <ArrowRight size={16} /></button>
+            </div>
+            {zipErr && <p className="zip-err">{zipErr}</p>}
+            <div className="state-chips">
+              <span className="chips-label">Demo jurisdictions</span>
+              {STATES.map((s) => <button key={s.id} className="state-chip" onClick={() => go(s)}>{s.name} <span className="zipmono">{s.zip}</span></button>)}
+            </div>
+            <div className="mini-legend">
+              {Object.entries(TIERS).map(([k, t]) => { const I = t.Icon; return <span key={k} className={`mini-tier tier-${t.key}`}><I size={12} strokeWidth={2.4} /> {t.short}</span>; })}
+            </div>
+          </div>
+        </main>
+      ) : (
+        <main className="results">
+          <aside className="rail">
+            <div className="rail-state">
+              <div className="rail-label">Jurisdiction</div>
+              <div className="rail-name">{state.name}</div>
+              <div className="rail-zip">{LOCAL[state.id].county} · {state.zip}</div>
+              <button className="switch" onClick={() => setView("home")}>Change location</button>
+            </div>
+            <div className="search"><Search size={15} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search requirements" aria-label="Search requirements" /></div>
+            <div className="filter-group">
+              <div className="filter-sub"><Filter size={11} /> Enforcement</div>
+              {Object.entries(TIERS).map(([k, t]) => (
+                <label key={k} className="check"><input type="checkbox" checked={tiers.has(k)} onChange={() => toggle(tiers, setTiers, k)} /><span className={`check-sw tier-${t.key}`} />{t.short}</label>
+              ))}
+            </div>
+            <div className="filter-group">
+              <div className="filter-sub"><Filter size={11} /> Category</div>
+              {DOMAINS.map((d) => (
+                <label key={d.id} className="check"><input type="checkbox" checked={domains.has(d.id)} onChange={() => toggle(domains, setDomains, d.id)} />{d.name}</label>
+              ))}
+            </div>
+            <nav className="toc">
+              <div className="filter-sub">Contents</div>
+              {visible.map((g) => (
+                <div key={g.domain.id} className="toc-domain">
+                  <div className="toc-domain-name">{g.domain.name}</div>
+                  {g.cats.map((c) => <a key={c.id} href={`#cat-${c.id}`} className="toc-link"><ChevronRight size={13} /> {c.name}</a>)}
+                </div>
+              ))}
+            </nav>
+          </aside>
+
+          <section className="feed">
+            <div className="feed-head">
+              <div><h2>Reporting obligations</h2><p className="feed-count">{shown} of {total} shown · {state.name}</p></div>
+              <span className="tip-wrap">
+                <button className="ask-open stub" aria-label="Ask about a scenario — planned feature"><FileText size={15} /> Ask about a scenario</button>
+                <span className="tip-text" role="tooltip">Planned: a scenario assistant that answers reporting questions against the verified jurisdiction data. It needs a secure backend, so it's stubbed in this static demo.</span>
+              </span>
+            </div>
+            {visible.length === 0 && <div className="empty">No requirements match those filters. Widen the enforcement or category filter, or clear the search.</div>}
+            {visible.map((g) => (
+              <div key={g.domain.id} className="domain-section">
+                <div className="domain-banner"><h3>{g.domain.name}</h3><p>{g.domain.blurb}</p></div>
+                {g.cats.map((c) => <RequirementCard key={c.id} cat={c} entry={DATA[state.id][c.id]} />)}
+              </div>
+            ))}
+            <div className="feed-foot">Maintenance model — each obligation is monitored against its source on a daily cycle. Federal and state changes are largely public; the local layer (offices, contacts, standing orders) is where quiet change concentrates. Detected changes flag a human reviewer before publication; nothing updates silently.</div>
+          </section>
+        </main>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
